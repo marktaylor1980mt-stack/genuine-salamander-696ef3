@@ -1,0 +1,1424 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mark Taylor | GRC Cyber Security Portfolio</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@300;400;500;600;700;800&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        cyber: {
+                            black: '#05070a',
+                            dark: '#0a0e17',
+                            card: '#111827',
+                            border: '#1e293b',
+                            accent: '#00f0ff',
+                            blue: '#0077ff',
+                            glow: 'rgba(0, 240, 255, 0.4)',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['Fira Code', 'monospace'],
+                        display: ['Orbitron', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #05070a;
+            color: #f1f5f9;
+            overflow-x: hidden;
+        }
+
+        .cyber-grid {
+            background-size: 40px 40px;
+            background-image: 
+                linear-gradient(to right, rgba(0, 240, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(0, 240, 255, 0.03) 1px, transparent 1px);
+        }
+
+        /* Glowing Blue Core Screen */
+        .glowing-core {
+            box-shadow: 
+                0 0 35px #00f0ff,
+                inset 0 0 35px #00f0ff,
+                0 0 70px #0077ff,
+                inset 0 0 70px #0077ff,
+                0 0 120px rgba(0, 240, 255, 0.6);
+            animation: pulseGlow 3s infinite alternate ease-in-out;
+        }
+
+        @keyframes pulseGlow {
+            0% {
+                transform: scale(0.98);
+                box-shadow: 0 0 25px #00f0ff, inset 0 0 25px #00f0ff, 0 0 50px #0077ff;
+            }
+            100% {
+                transform: scale(1.04);
+                box-shadow: 0 0 45px #00f0ff, inset 0 0 45px #00f0ff, 0 0 100px #0077ff, 0 0 150px rgba(0, 240, 255, 0.5);
+            }
+        }
+
+        .glow-text-cyan {
+            text-shadow: 0 0 14px rgba(0, 240, 255, 0.8), 0 0 28px rgba(0, 240, 255, 0.5);
+        }
+
+        .glass-card {
+            background: rgba(17, 24, 39, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 240, 255, 0.18);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+        }
+
+        .glass-card:hover {
+            border-color: rgba(0, 240, 255, 0.45);
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #05070a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 4px;
+            border: 1px solid rgba(0, 240, 255, 0.2);
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #0077ff;
+        }
+
+        @media print {
+            #cover-screen, header, nav, #risk-matrix, #contact, footer, .no-print {
+                display: none !important;
+            }
+            #main-portfolio {
+                display: block !important;
+                opacity: 1 !important;
+                color: black !important;
+                background: white !important;
+            }
+            .glass-card {
+                background: white !important;
+                color: black !important;
+                border: 1px solid #ccc !important;
+                box-shadow: none !important;
+            }
+            .text-white, .text-slate-300, .text-cyan-400, .text-cyan-300 {
+                color: black !important;
+            }
+        }
+    </style>
+</head>
+<body class="font-sans antialiased text-slate-200 cyber-grid selection:bg-cyan-500 selection:text-black">
+
+    <!-- Background Particle Canvas -->
+    <canvas id="bg-canvas" class="fixed inset-0 pointer-events-none z-0 opacity-40"></canvas>
+
+    <!-- ========================================================= -->
+    <!-- COVER SCREEN (BLACK BG WITH BRIGHT GLOWING BLUE CIRCLE) -->
+    <!-- ========================================================= -->
+    <div id="cover-screen" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#05070a] transition-opacity duration-1000">
+        <canvas id="cover-canvas" class="absolute inset-0 pointer-events-none z-0"></canvas>
+        
+        <div class="relative z-10 flex flex-col items-center text-center px-4">
+            
+            <!-- GLOWING BLUE CIRCLE / REACTOR CORE -->
+            <div id="core-trigger" class="glowing-core group relative cursor-pointer w-80 h-80 sm:w-96 sm:h-96 rounded-full border-2 border-cyan-400 flex flex-col items-center justify-center p-6 bg-cyan-950/20 backdrop-blur-md transition-transform duration-500 hover:scale-105 my-8">
+                
+                <div class="absolute inset-[-12px] rounded-full border border-dashed border-cyan-400/50 animate-[spin_20s_linear_infinite] pointer-events-none"></div>
+                <div class="absolute inset-[-24px] rounded-full border border-cyan-500/20 animate-[spin_35s_linear_infinite_reverse] pointer-events-none"></div>
+                
+                <i class="fa-solid fa-shield-halved text-4xl sm:text-5xl text-cyan-400 mb-3 glow-text-cyan animate-pulse"></i>
+                
+                <!-- EXACT TYPOGRAPHY REQUIREMENT -->
+                <h1 class="font-display font-black text-lg sm:text-2xl tracking-wider text-cyan-300 glow-text-cyan uppercase leading-snug">
+                    GRC Cyber Security Portfolio<br>
+                    <span class="text-white">Mark Taylor</span>
+                </h1>
+                
+                <div class="w-20 h-0.5 bg-gradient-to-r from-transparent via-cyan-400 to-transparent my-3"></div>
+                
+                <p class="text-xs font-mono text-cyan-400/90 tracking-widest uppercase mt-1">
+                    Click or Scroll to Enter
+                </p>
+
+                <div class="mt-4 px-3.5 py-1 bg-cyan-500/10 border border-cyan-500/40 rounded-full text-[10px] font-mono text-cyan-300 group-hover:bg-cyan-500/30 transition-all flex items-center space-x-1.5">
+                    <span>INITIALIZE DASHBOARD</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </div>
+
+            <div class="text-cyan-400/70 font-mono text-xs tracking-widest uppercase animate-bounce cursor-pointer flex flex-col items-center" onclick="enterPortfolio()">
+                <i class="fa-solid fa-angles-down text-lg mb-1 text-cyan-400"></i>
+                <span>ACCESS PORTFOLIO HUB</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- MAIN APPLICATION PORTFOLIO HUB -->
+    <!-- ========================================================= -->
+    <div id="main-portfolio" class="relative z-10 min-h-screen opacity-0 transition-opacity duration-1000 hidden">
+        
+        <!-- NAVBAR -->
+        <header class="sticky top-0 z-40 bg-cyber-black/90 backdrop-blur-md border-b border-cyber-border">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16">
+                    
+                    <a href="#" class="flex items-center space-x-3 group">
+                        <div class="w-9 h-9 rounded-lg bg-cyan-500/10 border border-cyan-400/40 flex items-center justify-center text-cyan-400 group-hover:bg-cyan-500/20 transition-all">
+                            <i class="fa-solid fa-shield-cat text-lg"></i>
+                        </div>
+                        <span class="font-display font-bold text-lg text-white tracking-wide">
+                            MARK TAYLOR <span class="text-cyan-400 font-normal text-xs font-mono">/ GRC ANALYST</span>
+                        </span>
+                    </a>
+
+                    <!-- Nav Links -->
+                    <nav class="hidden lg:flex space-x-6 text-xs font-mono text-slate-300">
+                        <a href="#about" class="hover:text-cyan-400 transition-colors">/Summary</a>
+                        <a href="#grc-docs" class="hover:text-cyan-400 transition-colors text-cyan-300 font-bold"><i class="fa-solid fa-folder-open mr-1"></i>GRC Docs</a>
+                        <a href="#skills" class="hover:text-cyan-400 transition-colors">/Skills</a>
+                        <a href="#credentials" class="hover:text-cyan-400 transition-colors">/Certifications</a>
+                        <a href="#experience" class="hover:text-cyan-400 transition-colors">/Experience</a>
+                        <a href="#risk-matrix" class="hover:text-cyan-400 transition-colors text-cyan-300 font-bold"><i class="fa-solid fa-calculator mr-1"></i>Risk Tool</a>
+                        <a href="#contact" class="hover:text-cyan-400 transition-colors">/Contact</a>
+                    </nav>
+
+                    <div class="flex items-center space-x-3">
+                        <button onclick="window.print()" class="no-print px-3.5 py-1.5 text-xs font-mono rounded bg-cyan-500/20 border border-cyan-400 text-cyan-300 hover:bg-cyan-400 hover:text-black font-semibold transition-all shadow-[0_0_15px_rgba(0,240,255,0.25)] flex items-center space-x-1.5">
+                            <i class="fa-solid fa-file-pdf"></i>
+                            <span>Print / Export CV</span>
+                        </button>
+                    </div>
+
+                    <button id="mobile-menu-btn" class="lg:hidden text-slate-300 hover:text-cyan-400 p-2">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mobile Dropdown -->
+            <div id="mobile-menu" class="hidden lg:hidden bg-cyber-card border-b border-cyber-border px-4 pt-2 pb-4 space-y-2 font-mono text-xs">
+                <a href="#about" class="block px-3 py-2 rounded text-slate-300 hover:bg-cyan-500/10 hover:text-cyan-400">/Summary</a>
+                <a href="#grc-docs" class="block px-3 py-2 rounded text-cyan-300 hover:bg-cyan-500/10">/GRC Docs</a>
+                <a href="#skills" class="block px-3 py-2 rounded text-slate-300 hover:bg-cyan-500/10 hover:text-cyan-400">/Skills</a>
+                <a href="#credentials" class="block px-3 py-2 rounded text-slate-300 hover:bg-cyan-500/10 hover:text-cyan-400">/Certifications</a>
+                <a href="#experience" class="block px-3 py-2 rounded text-slate-300 hover:bg-cyan-500/10 hover:text-cyan-400">/Experience</a>
+                <a href="#risk-matrix" class="block px-3 py-2 rounded text-cyan-300 hover:bg-cyan-500/10">/Risk Tool</a>
+                <a href="#contact" class="block px-3 py-2 rounded text-slate-300 hover:bg-cyan-500/10 hover:text-cyan-400">/Contact</a>
+            </div>
+        </header>
+
+        <!-- TOP CONTACT BAR -->
+        <div class="bg-cyber-dark border-b border-cyber-border py-2.5 px-4 text-xs font-mono">
+            <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+                <div class="flex items-center space-x-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse"></span>
+                    <span class="text-slate-300 font-bold">MARK TAYLOR</span>
+                    <span class="text-slate-500">|</span>
+                    <span class="text-cyan-300">Emerging Cybersecurity & GRC Analyst</span>
+                </div>
+                <div class="flex flex-wrap items-center gap-4 text-slate-300">
+                    <span><i class="fa-solid fa-location-dot text-cyan-400 mr-1"></i>Margate, CT9 3QN</span>
+                    <a href="tel:07964670276" class="hover:text-cyan-400 transition-colors"><i class="fa-solid fa-phone text-cyan-400 mr-1"></i>07964 670276</a>
+                    <a href="mailto:Mark.taylor1980.mt@gmail.com" class="hover:text-cyan-400 transition-colors"><i class="fa-solid fa-envelope text-cyan-400 mr-1"></i>Mark.taylor1980.mt@gmail.com</a>
+                    <a href="https://www.linkedin.com/in/mark-taylor-48" target="_blank" class="text-cyan-400 hover:underline flex items-center space-x-1"><i class="fa-brands fa-linkedin"></i><span>(48) Mark Taylor | LinkedIn</span></a>
+                </div>
+            </div>
+        </div>
+
+        <!-- HERO / PROFESSIONAL SUMMARY -->
+        <section id="about" class="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                
+                <div class="lg:col-span-8 space-y-6">
+                    <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/40 text-cyan-400 font-mono text-xs">
+                        <i class="fa-solid fa-user-shield"></i>
+                        <span>GRC, DATA PROTECTION & AI GOVERNANCE</span>
+                    </div>
+
+                    <h1 class="text-3xl sm:text-5xl font-display font-black tracking-tight text-white leading-tight">
+                        Mark Taylor <br>
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500 glow-text-cyan">Cybersecurity & GRC Portfolio</span>
+                    </h1>
+
+                    <div class="glass-card p-6 sm:p-8 rounded-xl border border-cyan-500/30">
+                        <h2 class="font-mono text-xs text-cyan-400 font-bold uppercase mb-3">&gt; PROFESSIONAL SUMMARY</h2>
+                        <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+                            Emerging Cybersecurity & GRC Analyst with a strong foundation in governance, risk management, data protection, and security principles. Transitions a 20-year career in military and logistics operations—where precision, regulatory compliance, and operational integrity were essential—into technical security domain expertise. Demonstrates hands-on capability across data security, GDPR, cloud risk concepts, and AI governance, supported by structured CPD certifications and practical technical lab work. Brings a disciplined operational mindset, a track record of rigorous policy enforcement, and a dedication to continuous professional development aligned with modern cybersecurity and regulatory standards.
+                        </p>
+                    </div>
+
+                    <div class="flex flex-wrap gap-4 pt-2">
+                        <a href="#grc-docs" class="px-6 py-3 rounded-lg bg-gradient-to-r from-cyan-400 to-blue-600 font-bold text-black font-mono text-xs hover:brightness-110 transition-all shadow-[0_0_20px_rgba(0,240,255,0.3)] flex items-center space-x-2">
+                            <i class="fa-solid fa-folder-open"></i>
+                            <span>EXPLORE GRC DOCUMENTATION SUITE</span>
+                        </a>
+                        <a href="#risk-matrix" class="px-6 py-3 rounded-lg bg-cyber-card border border-cyber-border hover:border-cyan-400 text-slate-200 font-mono text-xs flex items-center space-x-2 transition-all">
+                            <i class="fa-solid fa-calculator text-cyan-400"></i>
+                            <span>RISK MATRIX SIMULATOR</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- QUICK STATS CARD -->
+                <div class="lg:col-span-4 space-y-4">
+                    <div class="glass-card rounded-xl p-6 border border-cyber-border space-y-4">
+                        <div class="flex items-center justify-between pb-3 border-b border-cyber-border">
+                            <span class="font-mono text-xs text-cyan-400 font-bold uppercase">PROFILE OVERVIEW</span>
+                            <i class="fa-solid fa-award text-cyan-400"></i>
+                        </div>
+
+                        <div class="font-mono text-xs space-y-3">
+                            <div class="flex justify-between items-center p-2 bg-cyber-black rounded border border-cyber-border">
+                                <span class="text-slate-400">Primary Domain:</span>
+                                <span class="text-cyan-300 font-bold">GRC / Security Analyst</span>
+                            </div>
+                            <div class="flex justify-between items-center p-2 bg-cyber-black rounded border border-cyber-border">
+                                <span class="text-slate-400">Background:</span>
+                                <span class="text-cyan-300 font-bold">Military / Logistics Ops</span>
+                            </div>
+                            <div class="flex justify-between items-center p-2 bg-cyber-black rounded border border-cyber-border">
+                                <span class="text-slate-400">Certifications:</span>
+                                <span class="text-cyan-300 font-bold">ISO 42001 & ISO 27001</span>
+                            </div>
+                            <div class="flex justify-between items-center p-2 bg-cyber-black rounded border border-cyber-border">
+                                <span class="text-slate-400">Core Focus:</span>
+                                <span class="text-cyan-300 font-bold">AI Governance & GDPR</span>
+                            </div>
+                        </div>
+
+                        <div class="p-4 bg-cyan-950/30 border border-cyan-500/30 rounded-lg text-xs font-mono text-cyan-300 space-y-1">
+                            <div class="flex items-center space-x-2 font-bold">
+                                <i class="fa-solid fa-brain"></i>
+                                <span>AI Governance Focus</span>
+                            </div>
+                            <p class="text-[11px] text-slate-400 leading-normal">
+                                Certified in ISO 42001 (AI Governance in Organizations) and EU AI Act compliance concepts.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- GRC DOCS & REPORTS SECTION -->
+        <!-- ========================================================= -->
+        <section id="grc-docs" class="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-cyber-border/50">
+            <div class="mb-8">
+                <div class="inline-flex items-center space-x-2 text-cyan-400 font-mono text-xs mb-1">
+                    <i class="fa-solid fa-folder-open"></i>
+                    <span>REPORTS & AUDIT ARTIFACTS</span>
+                </div>
+                <h2 class="font-display text-2xl sm:text-3xl font-bold text-white uppercase tracking-wider">
+                    GRC Documentation Suite & Case Reports
+                </h2>
+                <p class="text-slate-400 text-xs sm:text-sm mt-1">Review audit deliverables, gap assessments, incident post-mortems, and business continuity plans.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                
+                <!-- Doc 1: ISO 27001 Mini Gap Assessment -->
+                <div class="glass-card p-6 rounded-xl border border-cyan-500/30 space-y-4 flex flex-col justify-between">
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between border-b border-cyber-border pb-3">
+                            <span class="px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 font-mono text-[11px] font-bold">ISO 27001:2022</span>
+                            <i class="fa-solid fa-file-contract text-cyan-400"></i>
+                        </div>
+                        <h3 class="font-bold text-white text-base">Mini Gap Assessment Report</h3>
+                        <p class="text-slate-300 text-xs leading-relaxed">
+                            Audit scenario evaluation for Bright Smile Dental Practice analyzing Clauses 4–10 & Annex A controls (A.5.15, A.7.4, A.8.8, A.8.12).
+                        </p>
+                    </div>
+                    <button onclick="openDocModal('iso-gap')" class="w-full py-2.5 rounded bg-cyber-black border border-cyan-400/40 text-cyan-300 font-mono text-xs hover:bg-cyan-500/20 transition-all flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-eye"></i>
+                        <span>VIEW ASSESSMENT SUMMARY</span>
+                    </button>
+                </div>
+
+                <!-- Doc 2: Business Continuity Plan -->
+                <div class="glass-card p-6 rounded-xl border border-cyan-500/30 space-y-4 flex flex-col justify-between">
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between border-b border-cyber-border pb-3">
+                            <span class="px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 font-mono text-[11px] font-bold">ISO 22301 / NIST SP 800-34</span>
+                            <i class="fa-solid fa-network-wired text-blue-400"></i>
+                        </div>
+                        <h3 class="font-bold text-white text-base">Enterprise Business Continuity Plan</h3>
+                        <p class="text-slate-300 text-xs leading-relaxed">
+                            Comprehensive framework covering Business Impact Analysis (BIA), RTO/RPO targets, call trees, and failover recovery procedures.
+                        </p>
+                    </div>
+                    <button onclick="openDocModal('bcp-plan')" class="w-full py-2.5 rounded bg-cyber-black border border-cyan-400/40 text-cyan-300 font-mono text-xs hover:bg-cyan-500/20 transition-all flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-eye"></i>
+                        <span>VIEW BCP DOCUMENTATION</span>
+                    </button>
+                </div>
+
+                <!-- Doc 3: Cyber Security Incident Post-Mortem -->
+                <div class="glass-card p-6 rounded-xl border border-cyan-500/30 space-y-4 flex flex-col justify-between">
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between border-b border-cyber-border pb-3">
+                            <span class="px-2 py-0.5 rounded bg-red-500/10 text-red-400 font-mono text-[11px] font-bold">INCIDENT REPORT</span>
+                            <i class="fa-solid fa-bug text-red-400"></i>
+                        </div>
+                        <h3 class="font-bold text-white text-base">Post-Mortem Incident Report</h3>
+                        <p class="text-slate-300 text-xs leading-relaxed">
+                            Root-cause analysis, timeline mapping, and corrective action plans following unauthorized database access attempts.
+                        </p>
+                    </div>
+                    <button onclick="openDocModal('post-mortem')" class="w-full py-2.5 rounded bg-cyber-black border border-cyan-400/40 text-cyan-300 font-mono text-xs hover:bg-cyan-500/20 transition-all flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-eye"></i>
+                        <span>VIEW INCIDENT ANALYSIS</span>
+                    </button>
+                </div>
+
+                <!-- Doc 4: Ransomware IR Plan -->
+                <div class="glass-card p-6 rounded-xl border border-cyan-500/30 space-y-4 flex flex-col justify-between">
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between border-b border-cyber-border pb-3">
+                            <span class="px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 font-mono text-[11px] font-bold">INCIDENT PLAYBOOK</span>
+                            <i class="fa-solid fa-shield-virus text-amber-400"></i>
+                        </div>
+                        <h3 class="font-bold text-white text-base">Ransomware Incident Response Plan</h3>
+                        <p class="text-slate-300 text-xs leading-relaxed">
+                            Operational IR playbook for Northstar Retail Ltd (IR-2026-014) detailing containment, eradication, backup restore, and reporting.
+                        </p>
+                    </div>
+                    <button onclick="openDocModal('ransomware-ir')" class="w-full py-2.5 rounded bg-cyber-black border border-cyan-400/40 text-cyan-300 font-mono text-xs hover:bg-cyan-500/20 transition-all flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-eye"></i>
+                        <span>VIEW PLAYBOOK SUMMARY</span>
+                    </button>
+                </div>
+
+                <!-- Doc 5: InfoSec Policy Review Framework -->
+                <div class="glass-card p-6 rounded-xl border border-cyan-500/30 space-y-4 flex flex-col justify-between lg:col-span-2">
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between border-b border-cyber-border pb-3">
+                            <span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 font-mono text-[11px] font-bold">POLICY GOVERNANCE</span>
+                            <i class="fa-solid fa-scale-balanced text-emerald-400"></i>
+                        </div>
+                        <h3 class="font-bold text-white text-base">Information Security Policy Review Framework</h3>
+                        <p class="text-slate-300 text-xs leading-relaxed">
+                            Structured governance audit framework evaluating password complexity, access management (RBAC), multi-factor authentication (MFA), and remote work security controls.
+                        </p>
+                    </div>
+                    <button onclick="openDocModal('policy-review')" class="w-full py-2.5 rounded bg-cyber-black border border-cyan-400/40 text-cyan-300 font-mono text-xs hover:bg-cyan-500/20 transition-all flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-eye"></i>
+                        <span>VIEW POLICY REVIEW DETAILS</span>
+                    </button>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- CORE COMPETENCIES & TECHNICAL SKILLS -->
+        <section id="skills" class="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-cyber-border/50">
+            <div class="mb-8">
+                <div class="inline-flex items-center space-x-2 text-cyan-400 font-mono text-xs mb-1">
+                    <i class="fa-solid fa-gears"></i>
+                    <span>SKILL MATRIX</span>
+                </div>
+                <h2 class="font-display text-2xl sm:text-3xl font-bold text-white uppercase tracking-wider">
+                    Core Competencies & Technical Skills
+                </h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                
+                <!-- Governance & Control Frameworks -->
+                <div class="glass-card p-6 rounded-xl space-y-4">
+                    <div class="flex items-center space-x-3 border-b border-cyber-border pb-3">
+                        <div class="w-8 h-8 rounded bg-cyan-500/10 text-cyan-400 flex items-center justify-center font-bold">
+                            <i class="fa-solid fa-landmark"></i>
+                        </div>
+                        <h3 class="font-bold text-white text-sm">Governance & Frameworks</h3>
+                    </div>
+                    <div class="flex flex-wrap gap-2 font-mono text-xs">
+                        <span class="px-2.5 py-1 rounded bg-cyber-black border border-cyan-500/30 text-cyan-300">GDPR</span>
+                        <span class="px-2.5 py-1 rounded bg-cyber-black border border-cyan-500/30 text-cyan-300">EU AI Act</span>
+                        <span class="px-2.5 py-1 rounded bg-cyber-black border border-cyan-500/30 text-cyan-300">ISO 27001 Concepts</span>
+                        <span class="px-2.5 py-1 rounded bg-cyber-black border border-cyan-500/30 text-cyan-300">ISO 42001</span>
+                        <span class="px-2.5 py-1 rounded bg-cyber-black border border-cyan-500/30 text-cyan-300">NIST CSF</span>
+                        <span class="px-2.5 py-1 rounded bg-cyber-black border border-cyan-500/30 text-cyan-300">Policy Compliance Interpretation</span>
+                        <span class="px-2.5 py-1 rounded bg-cyber-black border border-cyan-500/30 text-cyan-300">Control Frameworks</span>
+                    </div>
+                </div>
+
+                <!-- Risk Management -->
+                <div class="glass-card p-6 rounded-xl space-y-4">
+                    <div class="flex items-center space-x-3 border-b border-cyber-border pb-3">
+                        <div class="w-8 h-8 rounded bg-cyan-500/10 text-cyan-400 flex items-center justify-center font-bold">
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                        </div>
+                        <h3 class="font-bold text-white text-sm">Risk Management</h3>
+                    </div>
+                    <div class="flex flex-wrap gap-2 font-mono text-xs">
+                        <span class="px-2.5 py-1 rounded bg-cyber-black border border-cyan-500/30 text-cyan-300">Threat Identification</span>
+                        <span class="px-2.5 py-1 rounded bg-cyber-black border border-cyan-500/30 text-cyan-300">Risk Analysis</span>
+                        <span class="px-2.5 py-1 rounded bg-cyber-black border border-cyan-500/30 text-cyan-300">Cloud Security Risk</span>
+                        <span class="px-2.5 py-1 rounded bg-cyber-black border border-cyan-500/30 text-cyan-300">Data Governance</span>
+                        <span class="px-2.5 py-1 rounded bg-cyber-black border border-cyan-500/30 text-cyan-300">Security Controls</span>
+                    </div>
+                </div>
+
+                <!-- Cybersecurity Fundamentals -->
+                <div class="glass-card p-6 rounded-xl space-y-4">
+                    <div class="flex items-center space-x-3 border-b border-cyber-border pb-3">
+                        <div class="w-8 h-8 rounded bg-cyan-500/10 text-cyan-400 flex items-center justify-center font-bold">
+                            <i class="fa-solid fa-network-wired"></i>
+                        </div>
+                        <h3 class="font-bold text-white text-sm">Cybersecurity Fundamentals</h3>
+                    </div>
+                    <div class="flex flex-wrap gap-2 font-mono text-xs">
+                        <span class="px-2.5 py-1 rounded bg-cyber-black border border-cyan-500/30 text-cyan-300">Networking</span>
+                        <span class="px-2.5 py-1 rounded bg-cyber-black border border-cyan-500/30 text-cyan-300">DNS</span>
+                        <span class="px-2.5 py-1 rounded bg-cyber-black border border-cyan-500/30 text-cyan-300">Operating Systems</span>
+                        <span class="px-2.5 py-1 rounded bg-cyber-black border border-cyan-500/30 text-cyan-300">Access Control</span>
+                        <span class="px-2.5 py-1 rounded bg-cyber-black border border-cyan-500/30 text-cyan-300">Secure Data Handling Practices</span>
+                    </div>
+                </div>
+
+                <!-- Technical & Analytics -->
+                <div class="glass-card p-6 rounded-xl space-y-4">
+                    <div class="flex items-center space-x-3 border-b border-cyber-border pb-3">
+                        <div class="w-8 h-8 rounded bg-cyan-500/10 text-cyan-400 flex items-center justify-center font-bold">
+                            <i class="fa-solid fa-code"></i>
+                        </div>
+                        <h3 class="font-bold text-white text-sm">Technical & Analytics</h3>
+                    </div>
+                    <div class="flex flex-wrap gap-2 font-mono text-xs">
+                        <span class="px-2.5 py-1 rounded bg-cyber-black border border-cyan-500/30 text-cyan-300">SQL (Foundational)</span>
+                        <span class="px-2.5 py-1 rounded bg-cyber-black border border-cyan-500/30 text-cyan-300">Python (Foundational)</span>
+                        <span class="px-2.5 py-1 rounded bg-cyber-black border border-cyan-500/30 text-cyan-300">Power BI (Foundational)</span>
+                        <span class="px-2.5 py-1 rounded bg-cyber-black border border-cyan-500/30 text-cyan-300">Data Analysis & Reporting</span>
+                    </div>
+                </div>
+
+                <!-- Systems & Operations -->
+                <div class="glass-card p-6 rounded-xl space-y-4 lg:col-span-2">
+                    <div class="flex items-center space-x-3 border-b border-cyber-border pb-3">
+                        <div class="w-8 h-8 rounded bg-cyan-500/10 text-cyan-400 flex items-center justify-center font-bold">
+                            <i class="fa-solid fa-microchip"></i>
+                        </div>
+                        <h3 class="font-bold text-white text-sm">Systems & Operations</h3>
+                    </div>
+                    <div class="flex flex-wrap gap-2 font-mono text-xs">
+                        <span class="px-2.5 py-1 rounded bg-cyber-black border border-cyan-500/30 text-cyan-300">NetSuite</span>
+                        <span class="px-2.5 py-1 rounded bg-cyber-black border border-cyan-500/30 text-cyan-300">NVM</span>
+                        <span class="px-2.5 py-1 rounded bg-cyber-black border border-cyan-500/30 text-cyan-300">Circuit Testing</span>
+                        <span class="px-2.5 py-1 rounded bg-cyber-black border border-cyan-500/30 text-cyan-300">Lean Methodology (Kanban / Kaizen)</span>
+                        <span class="px-2.5 py-1 rounded bg-cyber-black border border-cyan-500/30 text-cyan-300">Technical Documentation</span>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- PROFESSIONAL CERTIFICATIONS & CONTINUOUS PROFESSIONAL DEVELOPMENT -->
+        <section id="credentials" class="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-cyber-border/50">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                
+                <!-- Certifications -->
+                <div class="lg:col-span-7 space-y-6">
+                    <div>
+                        <div class="inline-flex items-center space-x-2 text-cyan-400 font-mono text-xs mb-1">
+                            <i class="fa-solid fa-certificate"></i>
+                            <span>VERIFIED ACCREDITATIONS</span>
+                        </div>
+                        <h2 class="font-display text-2xl font-bold text-white uppercase tracking-wider">
+                            Certifications & Training
+                        </h2>
+                    </div>
+
+                    <div class="space-y-3 font-mono text-xs">
+                        
+                        <div class="glass-card p-4 rounded-lg flex items-start space-x-3 border-l-4 border-l-cyan-400">
+                            <i class="fa-solid fa-award text-cyan-400 text-xl mt-0.5"></i>
+                            <div>
+                                <h3 class="font-bold text-white text-sm">Managing AI Governance in Organizations with ISO 42001</h3>
+                                <p class="text-slate-400 text-xs mt-0.5">ISO 42001 AI Management System framework & AI ethics.</p>
+                            </div>
+                        </div>
+
+                        <div class="glass-card p-4 rounded-lg flex items-start space-x-3 border-l-4 border-l-cyan-400">
+                            <i class="fa-solid fa-certificate text-cyan-400 text-xl mt-0.5"></i>
+                            <div>
+                                <h3 class="font-bold text-white text-sm">ISO 27001 Information Security Management Systems</h3>
+                                <p class="text-slate-400 text-xs mt-0.5">ISMS implementation, control objectives, and internal auditing.</p>
+                            </div>
+                        </div>
+
+                        <div class="glass-card p-4 rounded-lg flex items-start space-x-3 border-l-4 border-l-cyan-400">
+                            <i class="fa-solid fa-shield text-cyan-400 text-xl mt-0.5"></i>
+                            <div>
+                                <h3 class="font-bold text-white text-sm">NIST Cyber Security Framework (CSF) Foundation</h3>
+                                <p class="text-slate-400 text-xs mt-0.5">Identify, Protect, Detect, Respond, and Recover core functions.</p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div class="glass-card p-3.5 rounded-lg border border-cyber-border">
+                                <h4 class="font-bold text-white text-xs">Level 3 Certificate in Cyber Security Principles</h4>
+                            </div>
+                            <div class="glass-card p-3.5 rounded-lg border border-cyber-border">
+                                <h4 class="font-bold text-white text-xs">Level 2 Certificate in Cyber Security Principles</h4>
+                            </div>
+                            <div class="glass-card p-3.5 rounded-lg border border-cyber-border">
+                                <h4 class="font-bold text-white text-xs">Level 2 Certificate in Data Protection & Principles</h4>
+                            </div>
+                            <div class="glass-card p-3.5 rounded-lg border border-cyber-border">
+                                <h4 class="font-bold text-white text-xs">GRC Fundamentals</h4>
+                            </div>
+                        </div>
+
+                        <div class="glass-card p-4 rounded-lg flex items-start space-x-3 border-l-4 border-l-blue-400">
+                            <i class="fa-solid fa-desktop text-blue-400 text-xl mt-0.5"></i>
+                            <div>
+                                <h3 class="font-bold text-white text-sm">Windows IT Security - Role of SOC Analysts & Centers</h3>
+                                <p class="text-slate-400 text-xs mt-0.5">SOC workflows, incident detection, and Windows operational security.</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- CPD & Education -->
+                <div class="lg:col-span-5 space-y-6">
+                    <div>
+                        <div class="inline-flex items-center space-x-2 text-cyan-400 font-mono text-xs mb-1">
+                            <i class="fa-solid fa-graduation-cap"></i>
+                            <span>DEVELOPMENT & ENGAGEMENT</span>
+                        </div>
+                        <h2 class="font-display text-2xl font-bold text-white uppercase tracking-wider">
+                            CPD & Industry Engagement
+                        </h2>
+                    </div>
+
+                    <!-- Completed Modules -->
+                    <div class="glass-card p-5 rounded-xl border border-cyber-border space-y-3">
+                        <h3 class="font-mono text-xs text-cyan-400 font-bold uppercase">&gt; CPD MODULES</h3>
+                        <ul class="space-y-2 text-xs text-slate-300 font-mono">
+                            <li class="flex items-start space-x-2">
+                                <i class="fa-solid fa-check text-cyan-400 text-xs mt-1"></i>
+                                <span>Strategies for Cloud Security Risk Management</span>
+                            </li>
+                            <li class="flex items-start space-x-2">
+                                <i class="fa-solid fa-check text-cyan-400 text-xs mt-1"></i>
+                                <span>Artificial Intelligence Governance</span>
+                            </li>
+                            <li class="flex items-start space-x-2">
+                                <i class="fa-solid fa-check text-cyan-400 text-xs mt-1"></i>
+                                <span>Data Governance Concepts</span>
+                            </li>
+                            <li class="flex items-start space-x-2">
+                                <i class="fa-solid fa-check text-cyan-400 text-xs mt-1"></i>
+                                <span>Introduction to Data Security</span>
+                            </li>
+                            <li class="flex items-start space-x-2">
+                                <i class="fa-solid fa-check text-cyan-400 text-xs mt-1"></i>
+                                <span>Understanding the EU AI Act</span>
+                            </li>
+                            <li class="flex items-start space-x-2">
+                                <i class="fa-solid fa-check text-cyan-400 text-xs mt-1"></i>
+                                <span>GDPR in Practice: Compliance & Fines</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Formal Education -->
+                    <div class="glass-card p-5 rounded-xl border border-cyber-border space-y-2 font-mono text-xs">
+                        <h3 class="text-cyan-400 font-bold uppercase">&gt; FORMAL EDUCATION</h3>
+                        <p class="text-slate-300 text-xs leading-relaxed">
+                            • NVQ Supply Chain Logistics – HM Forces<br>
+                            • GCSEs – St George's C of E High School, Broadstairs
+                        </p>
+                    </div>
+
+                    <!-- Threat Monitoring -->
+                    <div class="glass-card p-5 rounded-xl border border-cyber-border space-y-2 font-mono text-xs">
+                        <h3 class="text-cyan-400 font-bold uppercase">&gt; INDUSTRY MONITORING</h3>
+                        <p class="text-slate-300 text-xs">
+                            Active tracking via <strong>NCSC, BCS, Computer Weekly</strong>, and <strong>Wired Threat Level</strong>.
+                        </p>
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+
+        <!-- FRAMEWORK COMPLIANCE TRACKER RADAR -->
+        <section class="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-cyber-border/50">
+            <div class="glass-card p-6 sm:p-8 rounded-2xl border border-cyan-500/30">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-cyber-border pb-4 mb-6">
+                    <div>
+                        <div class="inline-flex items-center space-x-2 text-cyan-400 font-mono text-xs mb-1">
+                            <i class="fa-solid fa-sliders"></i>
+                            <span>GOVERNANCE READINESS</span>
+                        </div>
+                        <h2 class="font-display text-2xl font-bold text-white uppercase tracking-wider">
+                            Compliance Framework Radar
+                        </h2>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 font-mono text-xs">
+                    
+                    <div class="p-4 bg-cyber-black rounded-xl border border-cyber-border space-y-2">
+                        <div class="flex justify-between font-bold text-white">
+                            <span>ISO 27001</span>
+                            <span class="text-cyan-400">Certified</span>
+                        </div>
+                        <div class="w-full bg-slate-800 rounded-full h-2">
+                            <div class="bg-cyan-400 h-2 rounded-full w-[95%]"></div>
+                        </div>
+                        <p class="text-[11px] text-slate-400 pt-1">Information Security Management Systems.</p>
+                    </div>
+
+                    <div class="p-4 bg-cyber-black rounded-xl border border-cyber-border space-y-2">
+                        <div class="flex justify-between font-bold text-white">
+                            <span>ISO 42001</span>
+                            <span class="text-cyan-400">Certified</span>
+                        </div>
+                        <div class="w-full bg-slate-800 rounded-full h-2">
+                            <div class="bg-cyan-400 h-2 rounded-full w-[90%]"></div>
+                        </div>
+                        <p class="text-[11px] text-slate-400 pt-1">Artificial Intelligence Governance.</p>
+                    </div>
+
+                    <div class="p-4 bg-cyber-black rounded-xl border border-cyber-border space-y-2">
+                        <div class="flex justify-between font-bold text-white">
+                            <span>NIST CSF</span>
+                            <span class="text-cyan-400">Foundation</span>
+                        </div>
+                        <div class="w-full bg-slate-800 rounded-full h-2">
+                            <div class="bg-cyan-400 h-2 rounded-full w-[88%]"></div>
+                        </div>
+                        <p class="text-[11px] text-slate-400 pt-1">Identify, Protect, Detect, Respond, Recover.</p>
+                    </div>
+
+                    <div class="p-4 bg-cyber-black rounded-xl border border-cyber-border space-y-2">
+                        <div class="flex justify-between font-bold text-white">
+                            <span>GDPR</span>
+                            <span class="text-cyan-400">Level 2</span>
+                        </div>
+                        <div class="w-full bg-slate-800 rounded-full h-2">
+                            <div class="bg-cyan-400 h-2 rounded-full w-[92%]"></div>
+                        </div>
+                        <p class="text-[11px] text-slate-400 pt-1">Data privacy compliance & protection.</p>
+                    </div>
+
+                    <div class="p-4 bg-cyber-black rounded-xl border border-cyber-border space-y-2">
+                        <div class="flex justify-between font-bold text-white">
+                            <span>EU AI Act</span>
+                            <span class="text-cyan-400">Aligned</span>
+                        </div>
+                        <div class="w-full bg-slate-800 rounded-full h-2">
+                            <div class="bg-cyan-400 h-2 rounded-full w-[85%]"></div>
+                        </div>
+                        <p class="text-[11px] text-slate-400 pt-1">AI software capabilities & risk tiers.</p>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- PROFESSIONAL WORK EXPERIENCE TIMELINE -->
+        <section id="experience" class="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-cyber-border/50">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+                <div>
+                    <div class="inline-flex items-center space-x-2 text-cyan-400 font-mono text-xs mb-1">
+                        <i class="fa-solid fa-briefcase"></i>
+                        <span>CAREER HISTORY</span>
+                    </div>
+                    <h2 class="font-display text-2xl sm:text-3xl font-bold text-white uppercase tracking-wider">
+                        Professional Work Experience
+                    </h2>
+                </div>
+
+                <!-- Domain Filter Tabs -->
+                <div class="flex flex-wrap gap-2 font-mono text-xs">
+                    <button onclick="filterDomain('all')" class="domain-tab px-3 py-1.5 rounded bg-cyan-400 text-black font-bold">All Domains</button>
+                    <button onclick="filterDomain('ai')" class="domain-tab px-3 py-1.5 rounded bg-cyber-card border border-cyber-border text-slate-300 hover:text-cyan-400">AI & Tech</button>
+                    <button onclick="filterDomain('grc')" class="domain-tab px-3 py-1.5 rounded bg-cyber-card border border-cyber-border text-slate-300 hover:text-cyan-400">GRC & Compliance</button>
+                    <button onclick="filterDomain('ops')" class="domain-tab px-3 py-1.5 rounded bg-cyber-card border border-cyber-border text-slate-300 hover:text-cyan-400">Operations & Logistics</button>
+                    <button onclick="filterDomain('military')" class="domain-tab px-3 py-1.5 rounded bg-cyber-card border border-cyber-border text-slate-300 hover:text-cyan-400">Military</button>
+                </div>
+            </div>
+
+            <div class="space-y-8 relative">
+                
+                <!-- Timeline vertical line -->
+                <div class="absolute left-4 sm:left-6 top-3 bottom-3 w-0.5 bg-cyber-border hidden sm:block"></div>
+
+                <!-- 1. WhyBrilliant (APPOINTMENT SETTER WITH ISO 42001 & ISO 27001 DETAILS) -->
+                <div class="domain-card ai grc glass-card p-6 sm:p-8 rounded-xl border-l-4 border-l-cyan-400 relative sm:ml-12">
+                    <div class="flex flex-wrap justify-between items-start gap-2 border-b border-cyber-border pb-4 mb-4">
+                        <div>
+                            <h3 class="font-display font-bold text-lg text-white">Appointment Setter</h3>
+                            <p class="text-cyan-400 text-xs font-mono font-bold">WhyBrilliant</p>
+                        </div>
+                        <span class="px-3 py-1 rounded bg-cyan-500/10 border border-cyan-500/30 font-mono text-xs text-cyan-300 font-bold">May 2026 – Present</span>
+                    </div>
+
+                    <ul class="space-y-3 text-xs sm:text-sm text-slate-300 leading-relaxed font-sans">
+                        <li class="flex items-start space-x-2">
+                            <i class="fa-solid fa-angle-right text-cyan-400 text-xs mt-1"></i>
+                            <span>Introducing clients to AI software capabilities and what they can do.</span>
+                        </li>
+                        <li class="flex items-start space-x-2">
+                            <i class="fa-solid fa-angle-right text-cyan-400 text-xs mt-1"></i>
+                            <span>Introducing clients to <strong>ISO 42001</strong> and <strong>ISO 27001</strong> compliance frameworks, detailing their definitions and operational value.</span>
+                        </li>
+                    </ul>
+
+                    <!-- Expandable Framework Breakdown Box -->
+                    <div class="mt-5 p-4 rounded-lg bg-cyber-black border border-cyan-500/30 font-mono text-xs space-y-3">
+                        <div class="flex items-center justify-between text-cyan-400 font-bold border-b border-cyber-border pb-2">
+                            <span><i class="fa-solid fa-book-open mr-1.5"></i>ISO 42001 & ISO 27001 Conceptual Breakdown</span>
+                            <span class="text-[10px] text-slate-400">Standard Specifications</span>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
+                            <div class="p-3 rounded bg-cyan-950/20 border border-cyan-500/20 space-y-1.5">
+                                <h4 class="font-bold text-cyan-300 flex items-center">
+                                    <i class="fa-solid fa-brain mr-1.5"></i>ISO 42001 (AI Management System)
+                                </h4>
+                                <p class="text-[11px] text-slate-300 leading-normal">
+                                    <strong>Definition & Meaning:</strong> The international standard for Artificial Intelligence Management Systems (AIMS). It specifies requirements for establishing, implementing, maintaining, and continually improving an AI management system within organizations. Focuses on responsible AI development, ethical governance, risk mitigation, and transparency.
+                                </p>
+                            </div>
+
+                            <div class="p-3 rounded bg-cyan-950/20 border border-cyan-500/20 space-y-1.5">
+                                <h4 class="font-bold text-cyan-300 flex items-center">
+                                    <i class="fa-solid fa-shield-halved mr-1.5"></i>ISO 27001 (Information Security)
+                                </h4>
+                                <p class="text-[11px] text-slate-300 leading-normal">
+                                    <strong>Definition & Meaning:</strong> The premier global standard for Information Security Management Systems (ISMS). It provides requirements for establishing, implementing, maintaining, and continually improving information security controls to safeguard sensitive client and organizational data against emerging threats.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. TVOne Ltd -->
+                <div class="domain-card grc ops glass-card p-6 sm:p-8 rounded-xl border-l-4 border-l-blue-400 relative sm:ml-12">
+                    <div class="flex flex-wrap justify-between items-start gap-2 border-b border-cyber-border pb-4 mb-4">
+                        <div>
+                            <h3 class="font-display font-bold text-lg text-white">Receiving & Shipping Clerk</h3>
+                            <p class="text-cyan-400 text-xs font-mono font-bold">TVOne Ltd | Margate, UK</p>
+                        </div>
+                        <span class="px-3 py-1 rounded bg-cyan-500/10 border border-cyan-500/30 font-mono text-xs text-cyan-300 font-bold">05/2011 – 11/2024</span>
+                    </div>
+
+                    <ul class="space-y-2.5 text-xs sm:text-sm text-slate-300 leading-relaxed font-sans">
+                        <li class="flex items-start space-x-2">
+                            <i class="fa-solid fa-angle-right text-cyan-400 text-xs mt-1"></i>
+                            <span>Apply GDPR-aligned data handling procedures across customer orders and international shipping documentation.</span>
+                        </li>
+                        <li class="flex items-start space-x-2">
+                            <i class="fa-solid fa-angle-right text-cyan-400 text-xs mt-1"></i>
+                            <span>Interpret technical schematics, test circuitry, and perform systematic fault-finding—leveraging analytical problem-solving skills directly applicable to incident investigation and root-cause analysis.</span>
+                        </li>
+                        <li class="flex items-start space-x-2">
+                            <i class="fa-solid fa-angle-right text-cyan-400 text-xs mt-1"></i>
+                            <span>Administer inventory management systems (NetSuite, NVM), conduct regular cycle counts, and ensure continuous data accuracy for internal and external audit compliance.</span>
+                        </li>
+                        <li class="flex items-start space-x-2">
+                            <i class="fa-solid fa-angle-right text-cyan-400 text-xs mt-1"></i>
+                            <span>Implement Lean methodologies (Kanban/Kaizen) to optimize workflow safety, standardization, and operational governance.</span>
+                        </li>
+                        <li class="flex items-start space-x-2">
+                            <i class="fa-solid fa-angle-right text-cyan-400 text-xs mt-1"></i>
+                            <span>Coordinate cross-border logistics, enforcing strict adherence to international customs regulations and compliance standards.</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- 3. Staples UK -->
+                <div class="domain-card ops glass-card p-6 sm:p-8 rounded-xl border-l-4 border-l-blue-400 relative sm:ml-12">
+                    <div class="flex flex-wrap justify-between items-start gap-2 border-b border-cyber-border pb-4 mb-4">
+                        <div>
+                            <h3 class="font-display font-bold text-lg text-white">Warehouse Supervisor</h3>
+                            <p class="text-cyan-400 text-xs font-mono font-bold">Staples UK | Margate, UK</p>
+                        </div>
+                        <span class="px-3 py-1 rounded bg-cyan-500/10 border border-cyan-500/30 font-mono text-xs text-cyan-300 font-bold">02/2004 – 05/2011</span>
+                    </div>
+
+                    <ul class="space-y-2.5 text-xs sm:text-sm text-slate-300 leading-relaxed font-sans">
+                        <li class="flex items-start space-x-2">
+                            <i class="fa-solid fa-angle-right text-cyan-400 text-xs mt-1"></i>
+                            <span>Supervised site operational teams, driving strict adherence to corporate compliance, safety protocols, and operational workflows.</span>
+                        </li>
+                        <li class="flex items-start space-x-2">
+                            <i class="fa-solid fa-angle-right text-cyan-400 text-xs mt-1"></i>
+                            <span>Managed operating budgets, equipment validation logs, and inventory controls, instilling strong governance and documentation discipline.</span>
+                        </li>
+                        <li class="flex items-start space-x-2">
+                            <i class="fa-solid fa-angle-right text-cyan-400 text-xs mt-1"></i>
+                            <span>Enforced physical security and access protocols for high-value goods, ensuring zero compliance breaches.</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- 4. Subway -->
+                <div class="domain-card ops glass-card p-6 sm:p-8 rounded-xl border-l-4 border-l-blue-400 relative sm:ml-12">
+                    <div class="flex flex-wrap justify-between items-start gap-2 border-b border-cyber-border pb-4 mb-4">
+                        <div>
+                            <h3 class="font-display font-bold text-lg text-white">Assistant Manager</h3>
+                            <p class="text-cyan-400 text-xs font-mono font-bold">Subway | Margate, UK</p>
+                        </div>
+                        <span class="px-3 py-1 rounded bg-cyan-500/10 border border-cyan-500/30 font-mono text-xs text-cyan-300 font-bold">01/2004 – 09/2004</span>
+                    </div>
+
+                    <ul class="space-y-2.5 text-xs sm:text-sm text-slate-300 leading-relaxed font-sans">
+                        <li class="flex items-start space-x-2">
+                            <i class="fa-solid fa-angle-right text-cyan-400 text-xs mt-1"></i>
+                            <span>Managed daily unit operations, maintaining strict health, safety, and operational standards.</span>
+                        </li>
+                        <li class="flex items-start space-x-2">
+                            <i class="fa-solid fa-angle-right text-cyan-400 text-xs mt-1"></i>
+                            <span>Conducted vendor coordination, stock auditing, and log accuracy verification.</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- 5. HM Forces British Army -->
+                <div class="domain-card military grc ops glass-card p-6 sm:p-8 rounded-xl border-l-4 border-l-emerald-400 relative sm:ml-12">
+                    <div class="flex flex-wrap justify-between items-start gap-2 border-b border-cyber-border pb-4 mb-4">
+                        <div>
+                            <h3 class="font-display font-bold text-lg text-white">Supply Specialist (LCpl)</h3>
+                            <p class="text-emerald-400 text-xs font-mono font-bold">HM Forces (British Army) | Colchester, UK</p>
+                        </div>
+                        <span class="px-3 py-1 rounded bg-emerald-500/10 border border-emerald-500/30 font-mono text-xs text-emerald-300 font-bold">09/1996 – 01/2004</span>
+                    </div>
+
+                    <ul class="space-y-2.5 text-xs sm:text-sm text-slate-300 leading-relaxed font-sans">
+                        <li class="flex items-start space-x-2">
+                            <i class="fa-solid fa-angle-right text-emerald-400 text-xs mt-1"></i>
+                            <span>Executed supply chain operations within highly classified, high-security military environments under strict regulatory standards.</span>
+                        </li>
+                        <li class="flex items-start space-x-2">
+                            <i class="fa-solid fa-angle-right text-emerald-400 text-xs mt-1"></i>
+                            <span>Led and instructed recruit squads, demonstrating high-level leadership, operational discipline, and procedural precision.</span>
+                        </li>
+                        <li class="flex items-start space-x-2">
+                            <i class="fa-solid fa-angle-right text-emerald-400 text-xs mt-1"></i>
+                            <span>Earned advanced supply chain logistics qualifications and operated heavy commercial assets under strict risk management protocols.</span>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- INTERACTIVE GRC TOOLS (NIST 5x5 MATRIX SIMULATOR) -->
+        <section id="risk-matrix" class="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-cyber-border/50">
+            <div class="glass-card p-6 sm:p-10 rounded-2xl border border-cyan-500/40 relative overflow-hidden">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-cyber-border">
+                    <div>
+                        <div class="inline-flex items-center space-x-2 text-cyan-400 font-mono text-xs mb-1">
+                            <i class="fa-solid fa-calculator"></i>
+                            <span>INTERACTIVE GRC SIMULATOR</span>
+                        </div>
+                        <h2 class="font-display text-2xl sm:text-3xl font-bold text-white uppercase tracking-wider">
+                            NIST SP 800-30 5x5 Risk Matrix Tool
+                        </h2>
+                        <p class="text-slate-400 text-xs sm:text-sm mt-1">Select grid coordinates (Likelihood vs Impact) to calculate risk level and remediation controls.</p>
+                    </div>
+
+                    <div class="flex items-center space-x-2 bg-cyber-black px-3 py-1.5 rounded-lg border border-cyber-border font-mono text-xs">
+                        <span class="text-slate-400">Framework:</span>
+                        <span class="text-cyan-400 font-bold">NIST SP 800-30 Rev 1</span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mt-8">
+                    
+                    <div class="lg:col-span-7">
+                        <div class="space-y-2">
+                            <div class="flex items-center justify-between font-mono text-xs text-cyan-400">
+                                <span>Likelihood (1: Rare &rarr; 5: Almost Certain)</span>
+                                <span>Impact (1: Low &rarr; 5: Critical)</span>
+                            </div>
+
+                            <div class="grid grid-cols-5 gap-2 bg-cyber-black p-3 rounded-xl border border-cyber-border">
+                                <div id="matrix-grid-container" class="contents"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="lg:col-span-5 bg-cyber-black p-6 rounded-xl border border-cyber-border flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between border-b border-cyber-border pb-3">
+                                <span class="font-mono text-xs text-slate-400">CALCULATED RISK SCORE</span>
+                                <span id="risk-score-badge" class="px-2.5 py-1 rounded text-xs font-mono font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/40">
+                                    SCORE: 1 (LOW)
+                                </span>
+                            </div>
+
+                            <div class="mt-4 space-y-3 font-mono">
+                                <div>
+                                    <span class="text-xs text-slate-500 block">Threat Evaluation Scenario:</span>
+                                    <p id="risk-scenario-text" class="text-xs font-semibold text-cyan-300 mt-1">Likelihood 1/5, Impact 1/5 Target Assessment</p>
+                                </div>
+
+                                <div>
+                                    <span class="text-xs text-slate-500 block">Required Governance Action:</span>
+                                    <p id="risk-action-text" class="text-xs text-slate-300 leading-relaxed mt-1">Acceptable risk threshold under standard monitoring protocols.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-6 pt-4 border-t border-cyber-border flex items-center justify-between text-xs font-mono text-slate-400">
+                            <span>GRC Risk Calculation Engine</span>
+                            <button onclick="resetRiskMatrix()" class="text-cyan-400 hover:underline">Reset Matrix</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- CONTACT & OUTREACH -->
+        <section id="contact" class="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-cyber-border/50 mb-12">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                
+                <div class="lg:col-span-5 space-y-6">
+                    <div class="inline-flex items-center space-x-2 text-cyan-400 font-mono text-xs">
+                        <i class="fa-solid fa-headset"></i>
+                        <span>DIRECT CONTACT & INQUIRIES</span>
+                    </div>
+
+                    <h2 class="font-display text-3xl font-bold text-white">
+                        Connect with Mark Taylor
+                    </h2>
+
+                    <p class="text-slate-300 text-sm leading-relaxed">
+                        Interested in discussing GRC opportunities, risk management, ISO 27001/42001 compliance, or GDPR data protection projects? Send a message directly below or connect via LinkedIn.
+                    </p>
+
+                    <div class="space-y-3 pt-2 font-mono text-xs">
+                        <div class="flex items-center space-x-3 text-slate-300">
+                            <div class="w-8 h-8 rounded bg-cyan-500/10 flex items-center justify-center text-cyan-400 border border-cyan-500/20">
+                                <i class="fa-solid fa-location-dot"></i>
+                            </div>
+                            <span>Margate, CT9 3QN, United Kingdom</span>
+                        </div>
+                        <div class="flex items-center space-x-3 text-slate-300">
+                            <div class="w-8 h-8 rounded bg-cyan-500/10 flex items-center justify-center text-cyan-400 border border-cyan-500/20">
+                                <i class="fa-solid fa-phone"></i>
+                            </div>
+                            <a href="tel:07964670276" class="hover:text-cyan-400">07964 670276</a>
+                        </div>
+                        <div class="flex items-center space-x-3 text-slate-300">
+                            <div class="w-8 h-8 rounded bg-cyan-500/10 flex items-center justify-center text-cyan-400 border border-cyan-500/20">
+                                <i class="fa-solid fa-envelope"></i>
+                            </div>
+                            <a href="mailto:Mark.taylor1980.mt@gmail.com" class="hover:text-cyan-400">Mark.taylor1980.mt@gmail.com</a>
+                        </div>
+                        <div class="flex items-center space-x-3 text-slate-300">
+                            <div class="w-8 h-8 rounded bg-cyan-500/10 flex items-center justify-center text-cyan-400 border border-cyan-500/20">
+                                <i class="fa-brands fa-linkedin text-cyan-400"></i>
+                            </div>
+                            <a href="https://www.linkedin.com/in/mark-taylor-48" target="_blank" class="text-cyan-400 hover:underline font-bold">(48) Mark Taylor | LinkedIn</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-7">
+                    <form onsubmit="handleContactSubmit(event)" class="glass-card p-6 sm:p-8 rounded-2xl border border-cyan-500/30 space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-mono text-slate-300 mb-1">Your Name *</label>
+                                <input type="text" required class="w-full bg-cyber-black border border-cyber-border rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-cyan-400" placeholder="e.g. Alex Rivera">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-mono text-slate-300 mb-1">Company / Organization</label>
+                                <input type="text" class="w-full bg-cyber-black border border-cyber-border rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-cyan-400" placeholder="e.g. Enterprise Security Inc">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-mono text-slate-300 mb-1">Email Address *</label>
+                            <input type="email" required class="w-full bg-cyber-black border border-cyber-border rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-cyan-400" placeholder="alex@company.com">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-mono text-slate-300 mb-1">Message *</label>
+                            <textarea rows="4" required class="w-full bg-cyber-black border border-cyber-border rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-cyan-400" placeholder="Write your message or inquiry here..."></textarea>
+                        </div>
+
+                        <button type="submit" class="w-full py-3 rounded-lg bg-gradient-to-r from-cyan-400 to-blue-600 font-bold text-black font-mono text-sm hover:brightness-110 transition-all shadow-[0_0_20px_rgba(0,240,255,0.3)]">
+                            TRANSMIT MESSAGE
+                        </button>
+                    </form>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="border-t border-cyber-border bg-cyber-black py-8 px-4 text-center font-mono text-xs text-slate-500">
+            <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div>
+                    © Mark Taylor | GRC Cyber Security Portfolio.
+                </div>
+                <div class="flex flex-wrap items-center justify-center space-x-4 text-slate-400">
+                    <span>Margate, UK</span>
+                    <span>•</span>
+                    <a href="mailto:Mark.taylor1980.mt@gmail.com" class="hover:text-cyan-400">Mark.taylor1980.mt@gmail.com</a>
+                    <span>•</span>
+                    <a href="https://www.linkedin.com/in/mark-taylor-48" target="_blank" class="text-cyan-400 hover:underline">(48) Mark Taylor | LinkedIn</a>
+                </div>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- DOCUMENT PREVIEW MODAL -->
+    <div id="modal-doc-viewer" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md hidden">
+        <div class="glass-card rounded-2xl max-w-2xl w-full p-6 sm:p-8 border border-cyan-500/50 max-h-[90vh] overflow-y-auto space-y-4">
+            <div class="flex items-center justify-between border-b border-cyber-border pb-3">
+                <div class="flex items-center space-x-2 text-cyan-400 font-mono text-xs font-bold">
+                    <i class="fa-solid fa-file-lines text-base"></i>
+                    <span id="doc-modal-title">GRC Artifact Summary</span>
+                </div>
+                <button onclick="closeModal('modal-doc-viewer')" class="text-slate-400 hover:text-cyan-400 text-lg">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div id="doc-modal-content" class="text-xs sm:text-sm text-slate-300 font-sans leading-relaxed space-y-3">
+                <!-- Dynamic Content Hydrated via JavaScript -->
+            </div>
+
+            <div class="pt-4 border-t border-cyber-border flex justify-end">
+                <button onclick="closeModal('modal-doc-viewer')" class="px-5 py-2 rounded bg-cyan-400 text-black font-bold font-mono text-xs hover:bg-cyan-300">
+                    CLOSE VIEWER
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- NOTIFICATION MODAL -->
+    <div id="modal-alert" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md hidden">
+        <div class="glass-card rounded-xl max-w-md w-full p-6 border border-cyan-500/40 text-center">
+            <div class="text-3xl text-cyan-400 mb-3">
+                <i class="fa-solid fa-circle-check"></i>
+            </div>
+            <h3 id="modal-alert-title" class="font-display font-bold text-lg text-white mb-2">Notification</h3>
+            <p id="modal-alert-body" class="text-slate-300 text-sm mb-6"></p>
+            <button onclick="closeModal('modal-alert')" class="px-6 py-2 rounded bg-cyan-400 text-black font-bold font-mono text-xs hover:bg-cyan-300">
+                OK
+            </button>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        function enterPortfolio() {
+            const cover = document.getElementById('cover-screen');
+            const main = document.getElementById('main-portfolio');
+            
+            cover.classList.add('opacity-0');
+            setTimeout(() => {
+                cover.style.display = 'none';
+                main.classList.remove('hidden');
+                setTimeout(() => {
+                    main.classList.remove('opacity-0');
+                    initBgParticles();
+                }, 50);
+            }, 800);
+        }
+
+        document.getElementById('core-trigger').addEventListener('click', enterPortfolio);
+        
+        let hasEntered = false;
+        window.addEventListener('wheel', (e) => {
+            if (!hasEntered && e.deltaY > 20) {
+                hasEntered = true;
+                enterPortfolio();
+            }
+        });
+
+        document.getElementById('mobile-menu-btn').addEventListener('click', () => {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
+        });
+
+        function closeModal(id) {
+            document.getElementById(id).classList.add('hidden');
+        }
+
+        function showAlert(title, body) {
+            document.getElementById('modal-alert-title').innerText = title;
+            document.getElementById('modal-alert-body').innerText = body;
+            document.getElementById('modal-alert').classList.remove('hidden');
+        }
+
+        /* GRC Document Modal Content Hydration */
+        const docContentMap = {
+            'iso-gap': {
+                title: 'ISO 27001:2022 Mini Gap Assessment Report',
+                html: `
+                    <div class="p-3 bg-cyber-black rounded border border-cyber-border font-mono text-xs text-cyan-400 mb-2">Target Organization: Bright Smile Dental Practice | Lead Auditor: Mark Taylor</div>
+                    <p><strong>Executive Summary:</strong> Evaluated organizational cybersecurity controls against ISO/IEC 27001:2022 Clauses 4–10 and Annex A standards. Identified key gaps in access control (A.5.15), patch management (A.8.8), and data masking (A.8.12).</p>
+                    <h4 class="font-bold text-white mt-3">Key Audit Findings & Remediation:</h4>
+                    <ul class="list-disc pl-5 space-y-1 text-xs">
+                        <li><strong>Access Control (A.5.15):</strong> Missing mandatory Multi-Factor Authentication (MFA) on patient database portals. Recommended immediate MFA implementation.</li>
+                        <li><strong>Vulnerability Management (A.8.8):</strong> Absence of scheduled vulnerability scanning. Recommended quarterly automated vulnerability scanning.</li>
+                        <li><strong>Data Protection (A.8.12):</strong> Sensitive PII stored without end-to-end encryption at rest. Recommended AES-256 database column encryption.</li>
+                    </ul>
+                `
+            },
+            'bcp-plan': {
+                title: 'Enterprise Business Continuity Plan (BCP)',
+                html: `
+                    <div class="p-3 bg-cyber-black rounded border border-cyber-border font-mono text-xs text-blue-400 mb-2">Standard: ISO 22301 / NIST SP 800-34 | Scope: Cloud & On-Prem Operations</div>
+                    <p><strong>Overview:</strong> Outlines tactical resilience procedures, Business Impact Analysis (BIA) findings, Recovery Time Objectives (RTO), and Recovery Point Objectives (RPO) for critical operations.</p>
+                    <h4 class="font-bold text-white mt-3">Key Targets & Escalation Protocols:</h4>
+                    <ul class="list-disc pl-5 space-y-1 text-xs">
+                        <li><strong>Primary ERP & Inventory RTO:</strong> &lt; 4 Hours | <strong>RPO:</strong> &lt; 15 Minutes.</li>
+                        <li><strong>Call Tree & Emergency Response:</strong> Automated notification triggers for CISO, Incident Response Lead, and Legal Counsel within 30 minutes of severity-1 declaration.</li>
+                        <li><strong>Failover Procedure:</strong> High-availability cloud backup switchover routines tested via semi-annual tabletop exercises.</li>
+                    </ul>
+                `
+            },
+            'post-mortem': {
+                title: 'Cyber Security Incident Post-Mortem Report',
+                html: `
+                    <div class="p-3 bg-cyber-black rounded border border-cyber-border font-mono text-xs text-red-400 mb-2">Severity Level: SEV-1 | Category: Unauthorized Access Attempt</div>
+                    <p><strong>Incident Summary:</strong> Post-incident root-cause investigation into suspicious database queries originated from compromised service credentials.</p>
+                    <h4 class="font-bold text-white mt-3">Lessons Learned & Preventive Actions:</h4>
+                    <ul class="list-disc pl-5 space-y-1 text-xs">
+                        <li>Rotated all hardcoded service tokens across internal APIs to automated secret stores.</li>
+                        <li>Deployed web application firewall (WAF) rate-limiting and IP throttling rules.</li>
+                        <li>Enhanced SIEM real-time alert rules for anomalous database access queries.</li>
+                    </ul>
+                `
+            },
+            'ransomware-ir': {
+                title: 'Ransomware Incident Response Playbook (IR-2026-014)',
+                html: `
+                    <div class="p-3 bg-cyber-black rounded border border-cyber-border font-mono text-xs text-amber-400 mb-2">Organization: Northstar Retail Ltd | NIST SP 800-61 Aligned</div>
+                    <p><strong>Playbook Execution:</strong> Step-by-step containment, eradication, and recovery strategy for ransomware outbreak scenarios.</p>
+                    <h4 class="font-bold text-white mt-3">Action Steps:</h4>
+                    <ul class="list-disc pl-5 space-y-1 text-xs">
+                        <li><strong>Preparation & Detection:</strong> Endpoint Detection and Response (EDR) telemetry alerts on suspicious file encryption routines.</li>
+                        <li><strong>Containment:</strong> Automated network segregation of infected subnet segments.</li>
+                        <li><strong>Recovery:</strong> Clean-image restoration from air-gapped immutable backup repositories.</li>
+                    </ul>
+                `
+            },
+            'policy-review': {
+                title: 'Information Security Policy Review Framework',
+                html: `
+                    <div class="p-3 bg-cyber-black rounded border border-cyber-border font-mono text-xs text-emerald-400 mb-2">Scope: Enterprise Access Control & Remote Work Policy Audit</div>
+                    <p><strong>Governance Evaluation:</strong> Systematic review of corporate password complexity standards, Role-Based Access Controls (RBAC), and remote device management.</p>
+                    <h4 class="font-bold text-white mt-3">Policy Recommendations:</h4>
+                    <ul class="list-disc pl-5 space-y-1 text-xs">
+                        <li>Enforce minimum 16-character passphrases with zero mandatory quarterly expiration (aligning with NIST SP 800-63B).</li>
+                        <li>Mandate Zero Trust Network Access (ZTNA) agent enforcement for all remote endpoints.</li>
+                        <li>Quarterly privileged account user access reviews (UAR).</li>
+                    </ul>
+                `
+            }
+        };
+
+        function openDocModal(docKey) {
+            const data = docContentMap[docKey];
+            if (data) {
+                document.getElementById('doc-modal-title').innerText = data.title;
+                document.getElementById('doc-modal-content').innerHTML = data.html;
+                document.getElementById('modal-doc-viewer').classList.remove('hidden');
+            }
+        }
+
+        /* Filter Experience Cards by Domain */
+        function filterDomain(domain) {
+            const cards = document.querySelectorAll('.domain-card');
+            const tabs = document.querySelectorAll('.domain-tab');
+
+            tabs.forEach(tab => {
+                tab.className = 'domain-tab px-3 py-1.5 rounded bg-cyber-card border border-cyber-border text-slate-300 hover:text-cyan-400';
+            });
+            event.target.className = 'domain-tab px-3 py-1.5 rounded bg-cyan-400 text-black font-bold';
+
+            cards.forEach(card => {
+                if (domain === 'all' || card.classList.contains(domain)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        /* 5x5 NIST Risk Matrix Simulator */
+        function generateMatrix() {
+            const container = document.getElementById('matrix-grid-container');
+            container.innerHTML = '';
+            for (let l = 5; l >= 1; l--) {
+                for (let i = 1; i <= 5; i++) {
+                    const score = l * i;
+                    let colorClass = '';
+                    let level = '';
+
+                    if (score <= 5) {
+                        colorClass = 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/40';
+                        level = 'Low';
+                    } else if (score <= 10) {
+                        colorClass = 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30 hover:bg-yellow-500/40';
+                        level = 'Medium';
+                    } else if (score <= 15) {
+                        colorClass = 'bg-orange-500/20 text-orange-400 border-orange-500/30 hover:bg-orange-500/40';
+                        level = 'High';
+                    } else {
+                        colorClass = 'bg-red-500/20 text-red-400 border-red-500/30 hover:bg-red-500/40';
+                        level = 'Critical';
+                    }
+
+                    const cell = document.createElement('div');
+                    cell.className = `h-12 sm:h-14 rounded-lg border flex flex-col items-center justify-center cursor-pointer transition-all font-mono text-xs ${colorClass}`;
+                    cell.innerHTML = `<span class="font-bold">${score}</span><span class="text-[9px] opacity-75 hidden sm:inline">L${l}:I${i}</span>`;
+                    cell.onclick = () => selectRiskCell(l, i, score, level);
+                    container.appendChild(cell);
+                }
+            }
+        }
+
+        function selectRiskCell(l, i, score, level) {
+            const scoreBadge = document.getElementById('risk-score-badge');
+            scoreBadge.innerText = `SCORE: ${score} (${level.toUpperCase()})`;
+            
+            if (level === 'Low') scoreBadge.className = 'px-2.5 py-1 rounded text-xs font-mono font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/40';
+            else if (level === 'Medium') scoreBadge.className = 'px-2.5 py-1 rounded text-xs font-mono font-bold bg-yellow-500/20 text-yellow-400 border border-yellow-500/40';
+            else if (level === 'High') scoreBadge.className = 'px-2.5 py-1 rounded text-xs font-mono font-bold bg-orange-500/20 text-orange-400 border border-orange-500/40';
+            else scoreBadge.className = 'px-2.5 py-1 rounded text-xs font-mono font-bold bg-red-500/20 text-red-400 border border-red-500/40';
+
+            document.getElementById('risk-scenario-text').innerText = `Likelihood ${l}/5, Impact ${i}/5 Target Assessment`;
+            document.getElementById('risk-action-text').innerText = level === 'Critical' || level === 'High' 
+                ? 'Mandatory mitigation strategy required. Executive leadership & risk committee review with immediate remediation controls.' 
+                : 'Acceptable risk threshold under standard monitoring protocols.';
+        }
+
+        function resetRiskMatrix() {
+            selectRiskCell(1, 1, 1, 'Low');
+        }
+
+        function handleContactSubmit(e) {
+            e.preventDefault();
+            showAlert('Message Transmitted', 'Thank you! Your outreach message has been logged successfully.');
+            e.target.reset();
+        }
+
+        /* Canvas Particle Background */
+        function initCoverCanvas() {
+            const canvas = document.getElementById('cover-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            let w = canvas.width = window.innerWidth;
+            let h = canvas.height = window.innerHeight;
+
+            const particles = [];
+            for (let i = 0; i < 45; i++) {
+                particles.push({
+                    x: Math.random() * w,
+                    y: Math.random() * h,
+                    vx: (Math.random() - 0.5) * 0.5,
+                    vy: (Math.random() - 0.5) * 0.5,
+                    radius: Math.random() * 2 + 1
+                });
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, w, h);
+                ctx.fillStyle = 'rgba(0, 240, 255, 0.5)';
+                ctx.strokeStyle = 'rgba(0, 240, 255, 0.08)';
+
+                particles.forEach((p, idx) => {
+                    p.x += p.vx; p.y += p.vy;
+                    if (p.x < 0 || p.x > w) p.vx *= -1;
+                    if (p.y < 0 || p.y > h) p.vy *= -1;
+
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    for (let j = idx + 1; j < particles.length; j++) {
+                        const p2 = particles[j];
+                        const dist = Math.hypot(p.x - p2.x, p.y - p2.y);
+                        if (dist < 120) {
+                            ctx.beginPath();
+                            ctx.moveTo(p.x, p.y);
+                            ctx.lineTo(p2.x, p2.y);
+                            ctx.stroke();
+                        }
+                    }
+                });
+                requestAnimationFrame(animate);
+            }
+            animate();
+        }
+
+        function initBgParticles() {
+            const canvas = document.getElementById('bg-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            let w = canvas.width = window.innerWidth;
+            let h = canvas.height = window.innerHeight;
+
+            const nodes = [];
+            for (let i = 0; i < 35; i++) {
+                nodes.push({
+                    x: Math.random() * w,
+                    y: Math.random() * h,
+                    vx: (Math.random() - 0.5) * 0.3,
+                    vy: (Math.random() - 0.5) * 0.3
+                });
+            }
+
+            function render() {
+                ctx.clearRect(0, 0, w, h);
+                ctx.fillStyle = 'rgba(0, 240, 255, 0.3)';
+
+                nodes.forEach((n) => {
+                    n.x += n.vx; n.y += n.vy;
+                    if (n.x < 0 || n.x > w) n.vx *= -1;
+                    if (n.y < 0 || n.y > h) n.vy *= -1;
+
+                    ctx.beginPath();
+                    ctx.arc(n.x, n.y, 1.5, 0, Math.PI * 2);
+                    ctx.fill();
+                });
+                requestAnimationFrame(render);
+            }
+            render();
+        }
+
+        window.onload = function() {
+            initCoverCanvas();
+            generateMatrix();
+            selectRiskCell(1, 1, 1, 'Low');
+        };
+    </script>
+</body>
+</html>
